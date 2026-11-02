@@ -1,0 +1,21 @@
+Inspection Report — Example A (Passed)
+
+Agreement ID: 1
+Property: 123 Example Street, Unit 4B
+Inspection date: 2026-11-06
+Inspector: Member C (Oracle)
+Tenant: 0x2222222222222222222222222222222222222222
+Landlord: 0x1111111111111111111111111111111111111111
+
+Checklist:
+  [x] Walls and paint: no significant damage
+  [x] Flooring: minor wear, acceptable
+  [x] Appliances: all functional
+  [x] Water and plumbing: no leaks
+  [x] Windows and doors: intact
+  [x] Cleanliness: meets standard
+
+Overall result: PASSED
+
+Note: This is a synthetic document for course demonstration purposes only.
+No real property or tenancy is involved. All addresses are testnet placeholders.
