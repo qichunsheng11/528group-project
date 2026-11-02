@@ -1,0 +1,17 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contractAddress": "0x61Fdc579feFd9aa45613f9D8681B342676FC2585",
+  "deployTx": "0xeb37524def731fec7fca96a9a718cb5d123bd0024130074cad2ac6960e43fdcc",
+  "deployBlock": 12047570,
+  "deployGasUsed": "11762338",
+  "deployerAdmin": "0x24fc1A20d4b0443055AFB81AdA6D908C91987b35",
+  "oracleAddress": "0xD6109fB570846EB41AaFc72c0C473517A0d5EBd9",
+  "grantTx": "0xd7ba7d5c339c7b24af5e9671fd871e6635b56fcd0ffc39d1ee88d339c3d933ee",
+  "grantBlock": 12047571,
+  "grantGasUsed": "133572",
+  "verifiedHasRole": true,
+  "solidity": "0.8.24",
+  "optimizerRuns": 200,
+  "recordedAt": "2026-11-02T10:32:04.829Z"
+}
