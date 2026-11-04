@@ -1,0 +1,14 @@
+# Private keys and local environment config — NEVER commit
+.env
+.env.local
+.env.*.local
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Runtime output
+*.log
+.DS_Store
