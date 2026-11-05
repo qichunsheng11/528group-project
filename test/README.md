@@ -1,7 +1,7 @@
 # Rental Deposit Escrow with an Inspection Oracle
 
 **CDS528 Group Assignment — Blockchain DeFi Smart Contract Development**
-School of Data Science, Lingnan University
+Lingnan University
 
 > **Repository:** `https://github.com/<OWNER>/528group-project`
 > **Live demo (Sepolia):** [`0x61Fdc579feFd9aa45613f9D8681B342676FC2585`](https://sepolia.etherscan.io/address/0x61Fdc579feFd9aa45613f9D8681B342676FC2585)
