@@ -115,7 +115,7 @@ failed: 0xf1d4a98c6d4fb15df345d70851d5d98bc1467de48f21973681324b04889ac6b9
 
 ## Frontend
 
-Open `EscrowKey修改版.html` through a local HTTP server:
+Open `../EscrowKey.html` through a local HTTP server (from the repository root):
 
 ```powershell
 python -m http.server 8765
