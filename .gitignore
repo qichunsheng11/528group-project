@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+
+# hardhat build output
+artifacts/
+cache/
+coverage/
+coverage.json
+typechain-types/
+
+# secrets
+.env
+.env.local
+oracle-tools/.env
+oracle-tools/.venv/
+__pycache__/
+
+# editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# local npm cache used during setup
+.npm-cache/
+
+# local npm cache used during setup
+.npm-cache/
