@@ -15,10 +15,15 @@ module.exports = {
         enabled: true,
         runs: 200,
       },
+      // Pinned to the hardfork used for the live Sepolia deployment.
+      // With solc 0.8.24 + optimizer 200 + shanghai the compiled runtime
+      // bytecode is byte-identical to the deployed contract (7,324 bytes).
+      evmVersion: "shanghai",
     },
   },
   // Compiler settings above match the deployed bytecode:
-  // solc 0.8.24, optimizer enabled, 200 runs (see deployment_record.json).
+  // solc 0.8.24, optimizer enabled 200 runs, evmVersion shanghai
+  // (see deployment_record.json).
   paths: {
     sources: "./contracts",
     tests: "./test",
