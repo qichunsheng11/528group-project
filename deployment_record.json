@@ -6,12 +6,41 @@
   "deployBlock": 12047570,
   "deployGasUsed": "11762338",
   "deployerAdmin": "0x24fc1A20d4b0443055AFB81AdA6D908C91987b35",
-  "oracleAddress": "0xD6109fB570846EB41AaFc72c0C473517A0d5EBd9",
+  "oracleAddress": "0x78806E756B9E43012E369B99932f04299d32076D",
+  "oracleHistory": [
+    {
+      "address": "0xD6109fB570846EB41AaFc72c0C473517A0d5EBd9",
+      "grantedTx": "0xd7ba7d5c339c7b24af5e9671fd871e6635b56fcd0ffc39d1ee88d339c3d933ee",
+      "grantedBlock": 12047571,
+      "revokedTx": "0x50c0f7515fce95065d75dbb03b3c40935ead198ec9ccc2fe50fcbd1b660fa12b",
+      "revokedBlock": 12048904,
+      "status": "revoked"
+    },
+    {
+      "address": "0x78806E756B9E43012E369B99932f04299d32076D",
+      "grantedTx": "0xde6365ceadbfa74a683754db12ae95f09576a7666fc4da9e807aedffbfb0df70",
+      "grantedBlock": 12048905,
+      "status": "active"
+    }
+  ],
   "grantTx": "0xd7ba7d5c339c7b24af5e9671fd871e6635b56fcd0ffc39d1ee88d339c3d933ee",
   "grantBlock": 12047571,
   "grantGasUsed": "133572",
   "verifiedHasRole": true,
   "solidity": "0.8.24",
   "optimizerRuns": 200,
-  "recordedAt": "2026-11-02T10:32:04.829Z"
+  "recordedAt": "2026-11-02T10:32:04.829Z",
+  "oracle_rotation": {
+    "rotatedAt": "2026-11-02T15:01:02.747Z",
+    "revokedFrom": "0xD6109fB570846EB41AaFc72c0C473517A0d5EBd9",
+    "revokedTx": "0x50c0f7515fce95065d75dbb03b3c40935ead198ec9ccc2fe50fcbd1b660fa12b",
+    "revokedBlock": 12048904,
+    "grantedTo": "0x78806E756B9E43012E369B99932f04299d32076D",
+    "grantTx": "0xde6365ceadbfa74a683754db12ae95f09576a7666fc4da9e807aedffbfb0df70",
+    "grantBlock": 12048905,
+    "verified": {
+      "hasRoleOld": false,
+      "hasRoleNew": true
+    }
+  }
 }
