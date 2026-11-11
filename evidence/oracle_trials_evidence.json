@@ -1,0 +1,103 @@
+{
+  "steps": [
+    {
+      "step": "0. createAgreement(租期已过期)",
+      "actor": "LANDLORD",
+      "address": "0xEea4C6AEeD3b4b24E7767A7c62241044Ae1A89B7",
+      "tx": "7de05a5f95cacde3f1dd1f3585dec0c0cbcf0d58ab0610c78ffccde0cff4fea4",
+      "block": 12070268,
+      "gas": 1143723,
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "step": "1. deposit",
+      "actor": "TENANT",
+      "address": "0x41174BFC4BE39e7dC3Fa7fD1491C7b8A8B257566",
+      "tx": "55669cde8ef5d8162cabb9f7a90ce56b3185daedb6691c489028ca2776520fe4",
+      "block": 12070269,
+      "gas": 42138,
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "step": "2. recordInspection(Passed)",
+      "actor": "ORACLE",
+      "address": "0x78806E756B9E43012E369B99932f04299d32076D",
+      "tx": "86e52598e1d4babad4736be3119fca5abc1225a12394f82a35b2ea3b965489bd",
+      "block": 12070270,
+      "gas": 355976,
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "step": "3. proposeSettlement(10000)",
+      "actor": "LANDLORD",
+      "address": "0xEea4C6AEeD3b4b24E7767A7c62241044Ae1A89B7",
+      "tx": "8a9281cd288784c42fbf73c94b7019606617616bb7003a03c04b3cbdec4dde2c",
+      "block": 12070271,
+      "gas": 144788,
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "step": "4. acceptSettlement()",
+      "actor": "TENANT",
+      "address": "0x41174BFC4BE39e7dC3Fa7fD1491C7b8A8B257566",
+      "tx": "fc1f2380417c9f0ae402b86b51244f5ad64d59d9ae2cf5684bf0709a85eed772",
+      "block": 12070272,
+      "gas": 153994,
+      "expected": "success",
+      "actual": "success"
+    },
+    {
+      "step": "5a. Oracle → resolveDispute",
+      "actor": "ORACLE",
+      "address": "0x78806E756B9E43012E369B99932f04299d32076D",
+      "tx": "503f8f01a092a4c76076e31a0e4b6049022170b459372a64ec7218663960282e",
+      "block": 12070273,
+      "expected": "revert NotArbiter|InvalidStatus",
+      "actual": "InvalidStatus",
+      "onchainStatus": 0,
+      "pass": true
+    },
+    {
+      "step": "5b. Oracle → withdraw",
+      "actor": "ORACLE",
+      "address": "0x78806E756B9E43012E369B99932f04299d32076D",
+      "tx": "c5c4ada8820bf30c37f10b41c7bae85fe0efd83f7030c1b840b153068c4fe20a",
+      "block": 12070274,
+      "expected": "revert NotParty",
+      "actual": "NotParty",
+      "onchainStatus": 0,
+      "pass": true
+    },
+    {
+      "step": "5c. Tenant → withdraw（合法提取）",
+      "actor": "TENANT",
+      "address": "0x41174BFC4BE39e7dC3Fa7fD1491C7b8A8B257566",
+      "tx": "40bf657c8a14f1e3f7452994b4d1052a274dca46300cd50cc84653fda2fc7719",
+      "block": 12070275,
+      "gas": 44471,
+      "expected": "success",
+      "actual": "success"
+    }
+  ],
+  "network": "sepolia",
+  "contract": "0x61Fdc579feFd9aa45613f9D8681B342676FC2585",
+  "agreementId": 5,
+  "inspection": {
+    "recorded": true,
+    "passed": true,
+    "reportHash": "475f768f4eae7ac9edd9cec5c319c2f9ccbb1bce9a80984a93bfacfcd40e6db3",
+    "recorder": "0x78806E756B9E43012E369B99932f04299d32076D"
+  },
+  "settled": {
+    "status": "Settled",
+    "tenantBalance": "10000000000000000",
+    "landlordBalance": "0"
+  },
+  "final": {
+    "tenantWithdrawable": "0"
+  }
+}
