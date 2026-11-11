@@ -84,11 +84,14 @@ It never changes the status and never changes a balance.
 | `landlord` (per agreement) | recorded in `createAgreement` | create, propose/accept settlement, raise dispute, withdraw its share | deposit, rule a dispute |
 | `tenant` (per agreement) | recorded in `createAgreement` | deposit exactly once, propose/accept settlement, raise dispute, withdraw its share | cancel after funding |
 | `arbiter` (per agreement) | fixed at creation | issue exactly one ruling on a dispute | touch an agreement that is not disputed |
-| `ORACLE_ROLE` (global) | `grantRole` by admin | write `passed` + `reportHash` | change status, move funds, rule a dispute |
+| `ORACLE_ROLE` (global) | `grantRole` by admin | write `passed` + `reportHash` | change status, rule a dispute, or move funds *in its Oracle capacity* |
 | `DEFAULT_ADMIN_ROLE` (global) | constructor | grant / revoke `ORACLE_ROLE` | move user funds, rule a dispute |
 
 This separation is the core design claim: **the party that supplies facts is not the
-party that moves money.** Section 6 shows a test that proves it.
+party that moves money.** The contract enforces it per function (`ORACLE_ROLE` for
+`recordInspection`, the recorded arbiter for `resolveDispute`, landlord/tenant for
+`withdraw`) rather than by forbidding address overlap; the Sepolia demonstration
+uses four distinct wallets. Section 6 shows the tests that pin the checks down.
 
 ## 3. Repository layout
 
@@ -107,7 +110,8 @@ party that moves money.** Section 6 shows a test that proves it.
 ├── 智能合约/                        # Member B's original artefacts (ABI, bytecode, integration doc)
 ├── oracle-tools/                   # Member C's Python oracle tooling (hash + record evidence)
 ├── EscrowKey.html                  # Member A's single-file dApp
-├── security/slither-raw.txt        # full static-analysis output used in the report
+├── security/                       # test results, Slither output, Etherscan verification input
+├── evidence/                       # archived Sepolia receipts for the report's Tables 2-4
 ├── deployment_record.json          # address, tx hashes, block numbers
 └── hardhat.config.js
 ```
@@ -167,6 +171,14 @@ python -m http.server 8765
 6. **Settlement** or **Dispute**: the parties split the deposit, or the arbiter rules.
 7. **Withdraw**: each side pulls its own balance.
 
+**UI state labels.** The dApp renders state 0 as `AwaitingDeposit` and state 5 as
+`Refunded`; the corresponding contract states are `Created` and `Cancelled`.
+`Cancelled` means cancelled before funding - no refund takes place. The `/oracle`
+page lists only `NotRequested` agreements in `Active` / `SettlementProposed` /
+`Disputed`, i.e. a first submission only. The contract also permits overwriting an
+earlier inspection while the agreement stays eligible; that path is covered by
+`test/02-security.test.js` and can be exercised through `oracle-tools/sepolia_inspection.py`.
+
 ### Record inspection evidence from the CLI
 
 ```bash
@@ -192,7 +204,7 @@ characters. No second hashing, no re-encoding. Anyone holding the file can recom
 | Admin (`DEFAULT_ADMIN_ROLE`) | `0x24fc1A20d4b0443055AFB81AdA6D908C91987b35` |
 | Oracle (`ORACLE_ROLE`) | `0x78806E756B9E43012E369B99932f04299d32076D` |
 | Deployer / deploy tx | see `deployment_record.json` |
-| Verification | **Source Code Verified — Exact Match** on [Sepolia Etherscan](https://sepolia.etherscan.io/address/0x61Fdc579feFd9aa45613f9D8681B342676FC2585#code) |
+| Verification | **Not yet submitted on Etherscan**; reproducible standard-JSON input archived in `security/etherscan-standard-json.json` (recipe: `security/etherscan-verification.md`) |
 
 On-chain evidence (verified with `eth_getLogs` from the deployment block):
 
@@ -203,7 +215,7 @@ On-chain evidence (verified with `eth_getLogs` from the deployment block):
 | `InspectionRecorded` | 6 |
 | `SettlementProposed` / `SettlementAccepted` | 1 / 1 |
 | `Withdrawn` | 1 |
-| `RoleGranted` / `RoleRevoked` | 1 / 1 |
+| `RoleGranted` / `RoleRevoked` | 3 / 1 (two ORACLE_ROLE grants plus the constructor admin grant; one ORACLE_ROLE revoke) |
 
 End-to-end lifecycle demonstrated on Sepolia (agreement 5: create → deposit →
 inspection → settlement → withdrawal):
@@ -213,6 +225,13 @@ inspection → settlement → withdrawal):
 | `proposeSettlement` | `0x8a9281cd288784c42fbf73c94b7019606617616bb7003a03c04b3cbdec4dde2c` |
 | `acceptSettlement` | `0xfc1f2380417c9f0ae402b86b51244f5ad64d59d9ae2cf5684bf0709a85eed772` |
 | `withdraw` | `0x40bf657c8a14f1e3f7452994b4d1052a274dca46300cd50cc84653fda2fc7719` |
+
+The full receipt list behind the report's Tables 2-4 (six inspections, the
+rotation transactions and the agreement-5 permission trial, including both revert
+reasons) is archived in [`evidence/sepolia-transactions.md`](evidence/sepolia-transactions.md).
+Step 5a reverted `InvalidStatus` because the agreement was already `Settled`, so
+it does not by itself prove `NotArbiter`; that check is covered by
+`test/02-security.test.js` on a `Disputed` agreement.
 
 Remaining balance held in escrow: **0.05 ETH** across the still-open agreements.
 
@@ -268,10 +287,13 @@ Full output: [`security/slither-raw.txt`](security/slither-raw.txt).
    *Proof:* `contracts/test/ReentrantTenant.sol` + the reentrancy test — the attacker
    re-enters once and receives exactly one payout.
 2. **Oracle or admin abuse** (the oracle is the most privileged off-chain actor).
-   *Mitigation:* `ORACLE_ROLE` is a global role that can only write
-   `(bool passed, bytes32 reportHash)`; it cannot change status, cannot assign
-   balances, and cannot withdraw. The admin can only grant/revoke the role. Settlement
-   authority stays with the parties and the recorded arbiter.
+   *Mitigation:* `ORACLE_ROLE` is a global role whose only entry point writes
+   `(bool passed, bytes32 reportHash)`; it exposes no call that changes status,
+   assigns balances or withdraws. The admin can only grant/revoke the role.
+   Settlement authority stays with the parties and the recorded arbiter. The
+   contract does not forbid an Oracle wallet from also being a party, so this
+   separation is guaranteed by the checks on each function plus the distinct
+   wallets used in the demonstration, not by an address-level ban.
    *Proof:* the inspection-lane tests and "the admin cannot move user funds".
 3. **Funds locked forever / denial of settlement** (state-machine griefing).
    *Mitigation:* every funded agreement has a unilateral escape: either party may
@@ -302,8 +324,7 @@ Full output: [`security/slither-raw.txt`](security/slither-raw.txt).
 | No settlement timeout | Counterparty + arbiter can both stall; deposit stays locked | Arbiter staking + a `finalizeAfter` deadline that defaults to a 50/50 split |
 | Oracle is a single trusted key | A compromised oracle can write a false fact (but still cannot move money) | Multi-oracle quorum, or an attestation scheme with a dispute window |
 | `metadataURI` stored as a string | Unbounded calldata cost for long URIs | Emit it in the event only, keep a hash on-chain |
-| Source not yet verified on Etherscan | Graders must trust the repo bytecode | Verify with solc 0.8.24 / optimizer 200 / matching source path |
-| No end-to-end settlement recorded on Sepolia yet | Only deposit + inspection are demonstrated live | Run one full lifecycle (create → deposit → inspect → settle → withdraw) and archive the tx hashes |
+| Source not yet verified on Etherscan | Graders must trust the repo bytecode | Submit the archived standard-JSON input (`security/etherscan-verification.md`) |
 
 ## 10. Team and contributions
 
